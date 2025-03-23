@@ -9,6 +9,7 @@ import jakarta.validation.groups.Default;
 import site.easy.to.build.crm.customValidations.customer.UniqueEmail;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "customer")
@@ -73,6 +74,21 @@ public class Customer {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    //EGALITY OF
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(customerId, customer.customerId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(customerId);
+    }
+    //
 
     public Customer() {
     }

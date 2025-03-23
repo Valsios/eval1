@@ -19,6 +19,7 @@
             <!-- toggle and nav items -->
             <!-- ============================================================== -->
             <ul class="navbar-nav mr-auto">
+
                 <!-- This is  -->
                 <li class="nav-item"> <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
                 <li class="nav-item"> <a class="nav-link sidebartoggler d-none d-lg-block d-md-block waves-effect waves-dark" href="javascript:void(0)"><i class="fas fa-bars"></i></a> </li>
@@ -26,6 +27,11 @@
                 <!-- Search -->
                 <!-- ============================================================== -->
             </ul>
+
+            <!-- RESET DATA BUTTON -->
+            <a class="btn btn-danger" href="/manager/resetData">reset data</a>
+            <!-- END DATA BUTTON -->
+
             <!-- ============================================================== -->
             <!-- User profile and search -->
             <!-- ============================================================== -->
@@ -58,6 +64,7 @@
                         <a th:if="${#authentication.principal instanceof T(org.springframework.security.core.userdetails.User) and !#authorization.expression('hasRole(''ROLE_CUSTOMER'')')}"
                            th:href="${home + 'change-password'}" class="dropdown-item"><i class="fas fa-key"></i> change password</a>
                         <div class="dropdown-divider"></div>
+
                         <!-- text-->
                         <form th:action="@{/logout}" method="post">
                             <button type="submit"><i class="fa fa-power-off"></i> Logout</button>

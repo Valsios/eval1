@@ -75,6 +75,11 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Leads</h4>
+                            <div class="alert-danger" th:if="${alert_pourcentage != null}">
+                                <p th:text="${alert_pourcentage}"></p>
+                            </div>
+
+
                             <div class="table-responsive m-t-40">
                                 <table id="config-table" class="table display table-bordered table-striped no-wrap">
                                     <thead>

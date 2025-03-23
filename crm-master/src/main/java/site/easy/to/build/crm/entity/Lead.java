@@ -3,7 +3,9 @@ package site.easy.to.build.crm.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,6 +61,32 @@ public class Lead {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    //data pour depense
+    @Transient
+    @Positive(message = "Amount positif required.")
+    private BigDecimal amount_depense;
+
+    @Transient
+    @NotBlank(message = "Description depense required.")
+    private String description_depense;
+
+    public BigDecimal getAmount_depense() {
+        return amount_depense;
+    }
+
+    public void setAmount_depense(BigDecimal amount_depense) {
+        this.amount_depense = amount_depense;
+    }
+
+    public String getDescription_depense() {
+        return description_depense;
+    }
+
+    public void setDescription_depense(String description_depense) {
+        this.description_depense = description_depense;
+    }
+
+    //fin data pour depenses
 
     public Lead() {
     }

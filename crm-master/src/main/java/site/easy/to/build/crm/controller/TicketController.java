@@ -1,6 +1,9 @@
 package site.easy.to.build.crm.controller;
 
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.ConstraintViolation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -9,12 +12,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import site.easy.to.build.crm.entity.*;
 import site.easy.to.build.crm.entity.settings.TicketEmailSettings;
 import site.easy.to.build.crm.google.service.acess.GoogleAccessService;
 import site.easy.to.build.crm.google.service.gmail.GoogleGmailApiService;
+import site.easy.to.build.crm.my.model.Depense;
+import site.easy.to.build.crm.my.service.BudgetService;
+import site.easy.to.build.crm.my.service.DepenseService;
 import site.easy.to.build.crm.service.customer.CustomerService;
 import site.easy.to.build.crm.service.settings.TicketEmailSettingsService;
 import site.easy.to.build.crm.service.ticket.TicketService;
@@ -24,6 +32,7 @@ import site.easy.to.build.crm.util.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,6 +51,15 @@ public class TicketController {
     private final GoogleGmailApiService googleGmailApiService;
     private final EntityManager entityManager;
 
+    @Autowired
+    DepenseService depenseService;
+
+    @Autowired
+    BudgetService budgetService;
+
+
+
+
 
     @Autowired
     public TicketController(TicketService ticketService, AuthenticationUtils authenticationUtils, UserService userService, CustomerService customerService,
@@ -55,6 +73,23 @@ public class TicketController {
         this.entityManager = entityManager;
     }
 
+    @PostMapping("/confirmer")
+    public String confirmer(HttpSession session)
+    {
+        ticketService.save((Ticket) session.getAttribute("ticket"));
+        depenseService.save((Depense) session.getAttribute("depense"));
+        session.removeAttribute("depense");
+        session.removeAttribute("ticket");
+        return "redirect:/employee/ticket/assigned-tickets";
+    }
+
+    @PostMapping("/annuler")
+    public String annuler(HttpSession session)
+    {
+        session.removeAttribute("depense");
+        session.removeAttribute("ticket");
+        return "redirect:/employee/ticket/assigned-tickets";
+    }
     @GetMapping("/show-ticket/{id}")
     public String showTicketDetails(@PathVariable("id") int id, Model model, Authentication authentication) {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
@@ -92,10 +127,14 @@ public class TicketController {
     }
 
     @GetMapping("/assigned-tickets")
-    public String showEmployeeTicket(Model model, Authentication authentication) {
+    public String showEmployeeTicket(Model model, Authentication authentication,@ModelAttribute("alert_pourcentage") String alertMessage) {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         List<Ticket> tickets = ticketService.findEmployeeTickets(userId);
         model.addAttribute("tickets",tickets);
+        if (!alertMessage.isEmpty())
+        {
+            model.addAttribute("alert_pourcentage",alertMessage);
+        }
         return "ticket/my-tickets";
     }
     @GetMapping("/create-ticket")
@@ -125,7 +164,7 @@ public class TicketController {
     @PostMapping("/create-ticket")
     public String createTicket(@ModelAttribute("ticket") @Validated Ticket ticket, BindingResult bindingResult, @RequestParam("customerId") int customerId,
                                @RequestParam Map<String, String> formParams, Model model,
-                               @RequestParam("employeeId") int employeeId, Authentication authentication) {
+                               @RequestParam("employeeId") int employeeId, Authentication authentication, HttpServletRequest request, RedirectAttributes redirectAttribute, HttpSession session) {
 
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User manager = userService.findById(userId);
@@ -169,8 +208,43 @@ public class TicketController {
         ticket.setEmployee(employee);
         ticket.setCreatedAt(LocalDateTime.now());
 
-        ticketService.save(ticket);
 
+
+
+        //ajout depense dans table depense
+        String description_depense = request.getParameter("description_depense");
+        BigDecimal valeur_depense = BigDecimal.valueOf(Double.parseDouble(request.getParameter("amount_depense")));
+
+
+        Depense depense = new Depense();
+        depense.setDescription(description_depense);
+        depense.setAmount(valeur_depense);
+        depense.setTicket(ticket);
+        depense.setDateSet(LocalDateTime.now());
+
+
+        //popup depassement budget
+        double depassement = budgetService.check_mihotra(valeur_depense.doubleValue(),customer,LocalDateTime.now());
+        if (depassement>0)
+        {
+            session.setAttribute("depense",depense);
+            session.setAttribute("ticket",ticket);
+            model.addAttribute("popUp",true);
+            return "ticket/create-ticket";
+        }
+
+        //alert pourcentage
+        double pourcentage = budgetService.check_pourcentage(valeur_depense.doubleValue(),customer,LocalDateTime.now());
+        redirectAttribute.addFlashAttribute("alert_pourcentage","");
+        if (pourcentage>0)
+        {
+            redirectAttribute.addFlashAttribute("alert_pourcentage","Depense a etteint "+pourcentage+"% du budget");
+        }
+
+        ticketService.save(ticket);
+        depenseService.save(depense);
+
+        //end
         return "redirect:/employee/ticket/assigned-tickets";
     }
 
@@ -315,6 +389,7 @@ public class TicketController {
             return "error/access-denied";
         }
 
+        depenseService.deleteByTicket(ticket);
         ticketService.delete(ticket);
         return "redirect:/employee/ticket/assigned-tickets";
     }

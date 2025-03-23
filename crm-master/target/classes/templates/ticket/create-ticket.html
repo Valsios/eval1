@@ -70,6 +70,45 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Create New Ticket</h4>
+                            <!-- Modal Popup -->
+                            <div id="budgetExceededModal" class="modal" tabindex="-1" role="dialog" th:attr="style=${popUp} ? 'display:block;' : 'display:none;'">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Alerte Dépense</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>La dépense dépasse le budget autorisé. Voulez-vous continuer ?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <!-- Form pour Annuler -->
+                                            <form th:action="@{/employee/ticket/annuler}" method="post">
+                                                <button type="submit" class="btn btn-secondary" id="cancelButton">Annuler</button>
+                                            </form>
+
+                                            <!-- Form pour Confirmer -->
+                                            <form th:action="@{/employee/ticket/confirmer}" method="post">
+                                                <button type="submit" class="btn btn-primary" id="confirmExpense">Confirmer</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                $(document).ready(function () {
+                                    var showModal = [[${popUp}]] ? true : false; // Correction de la variable
+                                    if (showModal) {
+                                        $('#budgetExceededModal').modal('show');
+                                    }
+
+                                    // Fermeture du modal après un clic sur un bouton
+                                    $("#confirmExpense, #cancelButton").click(function() {
+                                        $("#budgetExceededModal").modal("hide");
+                                    });
+                                });
+                            </script>
+                            <!-- end popup -->
                             <form th:object="${ticket}" th:action="@{/employee/ticket/create-ticket}" method="post">
 
                                 <label class="m-t-20" for="subject">Subject:</label>
@@ -135,6 +174,24 @@
                                         <option th:each="customer : ${customers}" th:text="${customer.name}" th:value="${customer.customerId}"></option>
                                     </select>
                                 </div>
+
+                                <!-- modif depense  -->
+                                <label class="m-t-20" for="description_depense">Description depense:</label>
+                                <div class="input-group">
+                                    <input th:field="*{description_depense}" type="text" id="description_depense" name="description_depense" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <span class="text-danger font-weight-bold" th:if="${#fields.hasErrors('description_depense')}" th:errors="*{description_depense}"></span>
+                                </div>
+
+                                <label class="m-t-20" for="valeur_depense">Valeur depense:</label>
+                                <div class="input-group">
+                                    <input th:field="*{amount_depense}" type="number" id="valeur_depense" name="amount_depense" class="form-control" step="0.01">
+                                </div>
+                                <div class="input-group">
+                                    <span class="text-danger font-weight-bold" th:if="${#fields.hasErrors('amount_depense')}" th:errors="*{amount_depense}"></span>
+                                </div>
+
 
                                 <button type="submit" class="btn btn-primary m-t-20">Create ticket</button>
                             </form>
