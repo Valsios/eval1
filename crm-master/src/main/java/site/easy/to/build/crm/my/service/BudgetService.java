@@ -38,11 +38,11 @@ public class BudgetService {
         for (Budget budget : budgetList)
         {
             BudgetModel budgetModel = new BudgetModel();
-            budgetModel.setIdBudget(budgetModel.getIdBudget());
+            budgetModel.setIdBudget(budget.getIdBudget());
             budgetModel.setDateBudget(budget.getDateBudget());
             budgetModel.setAmount(budget.getAmount().doubleValue());
             budgetModel.setNom_customer(budget.getCustomer().getName());
-
+            budgetModel.setId_customer(budget.getCustomer().getCustomerId());
             toReturn.add(budgetModel);
         }
 
@@ -74,7 +74,8 @@ public class BudgetService {
         double sommeDepense = depenseService.sommeDepense(customer,dateTime)+volaDepense;
         double sommeBudget = sommeBudget(customer,dateTime);
         double seuil = seuilBudgetService.getSeuilBudget().getValue();
-
+        System.out.println("somme depense : "+sommeDepense);
+        System.out.println("somme budget : "+sommeBudget);
         double pourcentage = (sommeDepense*100)/sommeBudget;
         if (pourcentage >= seuil)
         {

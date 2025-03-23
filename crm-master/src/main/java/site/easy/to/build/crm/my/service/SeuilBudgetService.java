@@ -13,4 +13,8 @@ public class SeuilBudgetService {
     {
         return seuilBudgetRepository.findAll().get(0);
     }
+    public void save(SeuilBudget seuilBudget)
+    {
+        seuilBudgetRepository.save(seuilBudget);
+    }
 }

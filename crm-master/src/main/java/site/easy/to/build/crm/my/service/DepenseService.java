@@ -13,7 +13,10 @@ import site.easy.to.build.crm.my.modelAPI.LeadModel;
 import site.easy.to.build.crm.my.modelAPI.TicketModel;
 import site.easy.to.build.crm.my.repository.BudgetRepository;
 import site.easy.to.build.crm.my.repository.DepenseRepository;
+import site.easy.to.build.crm.service.lead.LeadService;
+import site.easy.to.build.crm.service.ticket.TicketService;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +27,54 @@ import java.util.Map;
 public class DepenseService {
     @Autowired
     DepenseRepository depenseRepository;
+
+    @Autowired
+    LeadService leadService;
+
+    @Autowired
+    TicketService ticketService;
+
+
+    //update price ticket
+    public void updateValeurTicket(String idTicket,String newAmount)
+    {
+        Ticket ticket = ticketService.findByTicketId(Integer.parseInt(idTicket));
+        Depense depense = new Depense();
+        depense.setTicket(ticket);
+        depense.setDateSet(LocalDateTime.now());
+        depense.setDescription("NEW AMOUNT");
+        depense.setAmount(BigDecimal.valueOf(Double.parseDouble(newAmount)));
+
+        save(depense);
+    }
+
+    //update price lead
+    public void updateValeurLead(String idLead,String newAmount)
+    {
+        Lead lead = leadService.findByLeadId(Integer.parseInt(idLead));
+        Depense depense = new Depense();
+        depense.setLead(lead);
+        depense.setDateSet(LocalDateTime.now());
+        depense.setDescription("NEW AMOUNT");
+        depense.setAmount(BigDecimal.valueOf(Double.parseDouble(newAmount)));
+
+        save(depense);
+    }
+    @Transactional
+    public void deleteLead(String idLead)
+    {
+        Lead lead = leadService.findByLeadId(Integer.parseInt(idLead));
+        deleteByLead(lead);
+        leadService.delete(lead);
+    }
+
+    @Transactional
+    public void deleteTicket(String idTicket)
+    {
+        Ticket ticket = ticketService.findByTicketId(Integer.parseInt(idTicket));
+        deleteByTicket(ticket);
+        ticketService.delete(ticket);
+    }
 
     public void save(Depense depense)
     {
@@ -71,7 +122,7 @@ public class DepenseService {
             Double value = map.getValue();
             ticketModel.setTicketId(ticket.getTicketId());
             ticketModel.setAmount_depense(value);
-            ticketModel.setDescription(ticketModel.getDescription());
+            ticketModel.setDescription(ticket.getDescription());
             ticketModel.setCreatedAt(ticket.getCreatedAt());
             ticketModel.setNom_customer(ticket.getCustomer().getName());
             ticketModel.setPriority(ticket.getPriority());
@@ -111,6 +162,8 @@ public class DepenseService {
 
         return toReturn;
     }
+
+
 
     //END
     public HashMap<Ticket,Double> getDepenseTicketCustomerDate(Customer customer,LocalDateTime dateTime)
@@ -154,6 +207,7 @@ public class DepenseService {
         return somme;
     }
 
+
     @Transactional
     public void deleteByLead(Lead lead)
     {
@@ -165,5 +219,7 @@ public class DepenseService {
     {
         depenseRepository.deleteByTicket(ticket);
     }
+
+
 
 }

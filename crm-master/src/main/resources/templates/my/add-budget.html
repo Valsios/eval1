@@ -81,7 +81,7 @@
 
                                 <label class="m-t-20" for="valeur_budget">Valeur Budget:</label>
                                 <div class="input-group">
-                                    <input th:field="*{amount}" type="number" name="amount" id="valeur_budget" class="form-control">
+                                    <input th:field="*{amount}" type="number" name="amount" id="valeur_budget" class="form-control" step="0.01">
                                 </div>
                                 <div class="input-group">
                                     <span class="text-danger font-weight-bold" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></span>

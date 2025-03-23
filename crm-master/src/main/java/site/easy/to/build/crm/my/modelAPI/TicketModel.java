@@ -1,6 +1,9 @@
 package site.easy.to.build.crm.my.modelAPI;
 
+import org.springframework.cglib.core.Local;
+
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 public class TicketModel {
 
@@ -12,7 +15,7 @@ public class TicketModel {
    String nom_manager;
    String nom_employee;
    String nom_customer;
-   LocalDateTime createdAt;
+   Long createdAt;
    Double amount_depense;
    String description_depense;
 
@@ -80,12 +83,12 @@ public class TicketModel {
         this.nom_customer = nom_customer;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Long getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+        this.createdAt = createdAt.toInstant(ZoneOffset.UTC).toEpochMilli();
     }
 
     public Double getAmount_depense() {
@@ -113,7 +116,7 @@ public class TicketModel {
         this.nom_manager = nom_manager;
         this.nom_employee = nom_employee;
         this.nom_customer = nom_customer;
-        this.createdAt = createdAt;
+        this.setCreatedAt(createdAt);
         this.amount_depense = amount_depense;
         this.description_depense = description_depense;
     }
