@@ -1,0 +1,326 @@
+@using EVAL.Models.DateUtil
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Text.Json
+
+@{
+    var listTicket = ViewData["ticketList"] as List<Ticket>;
+    var listLead = ViewData["leadList"] as List<Lead>;
+    var listBudget = ViewData["budgetList"] as List<Budget>;
+
+    var sommeTicket = ViewData["ticketSomme"];
+    var sommeLead = ViewData["leadSomme"];
+    var sommeBudget = ViewData["budgetSomme"];
+    
+    //top budget
+    var fourFirst = ViewData["fourFirst"] as Dictionary<(string, int), double>;
+    var categories = JsonSerializer.Serialize(fourFirst.Keys.Select(k => k.Item1));
+    var values = JsonSerializer.Serialize(fourFirst.Values);
+}
+<!-- section chart -->
+<div class="row">
+<div class="col-md-3">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Depense Ticket/Lead</h5>
+
+              <!-- Donut Chart -->
+              <div id="donutChart" style="min-height: 200px;" class="echart"></div>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                  echarts.init(document.querySelector("#donutChart")).setOption({
+                    tooltip: {
+                      trigger: 'item'
+                    },
+                    legend: {
+                      top: '5%',
+                      left: 'center'
+                    },
+                    series: [{
+                      name: 'Access From',
+                      type: 'pie',
+                      radius: ['40%', '70%'],
+                      avoidLabelOverlap: false,
+                      label: {
+                        show: false,
+                        position: 'center'
+                      },
+                      emphasis: {
+                        label: {
+                          show: true,
+                          fontSize: '18',
+                          fontWeight: 'bold'
+                        }
+                      },
+                      labelLine: {
+                        show: false
+                      },
+                      data: [{
+                          value: @sommeTicket,
+                          name: 'Ticket'
+                        },
+                        {
+                          value: @sommeLead,
+                          name: 'Lead'
+                        },
+                      ]
+                    }]
+                  });
+                });
+              </script>
+              <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+
+              <!-- End Donut Chart -->
+
+            </div>
+          </div>
+        </div>
+    
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">High Budgets</h5>
+
+                    <!-- Bar Chart -->
+                    <div id="barChart" style="min-height: 200px;" class="echart"></div>
+
+                  <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    var categories = @Html.Raw(categories);
+                    var values = @Html.Raw(values);
+                  
+                    echarts.init(document.querySelector("#barChart")).setOption({
+                      xAxis: {
+                        type: 'category',
+                        data: categories
+                      },
+                      yAxis: {
+                        type: 'value'
+                      },
+                      series: [{
+                        data: values,
+                        type: 'bar'
+                      }]
+                    });
+                  });
+                  </script>
+                    <!-- End Bar Chart -->
+
+                </div>
+            </div>
+        </div>
+          <div class="col-md-5">
+                  <div class="card">
+                    <div class="card-body">
+                       <h5 class="card-title">Valeur des sommes</h5>
+                      
+                                    <!-- Vertical Bar Chart -->
+                                    <div id="verticalBarChart" style="min-height: 200px;" class="echart"></div>
+                      
+                                    <script>
+                                      document.addEventListener("DOMContentLoaded", () => {
+                                        echarts.init(document.querySelector("#verticalBarChart")).setOption({
+                                 
+                                          tooltip: {
+                                            trigger: 'axis',
+                                            axisPointer: {
+                                              type: 'shadow'
+                                            }
+                                          },
+                                          legend: {},
+                                          grid: {
+                                            left: '3%',
+                                            right: '4%',
+                                            bottom: '3%',
+                                            containLabel: true
+                                          },
+                                          xAxis: {
+                                            type: 'value',
+                                            boundaryGap: [0, 0.01]
+                                          },
+                                          yAxis: {
+                                            type: 'category',
+                                            data: ['Lead', 'Ticket', 'Budget']
+                                          },
+                                          series: [{
+                                              
+                                              type: 'bar',
+                                              data: [@sommeLead, @sommeTicket, @sommeBudget]
+                                            }
+                                          ]
+                                        });
+                                      });
+                                    </script>
+                                    <!-- End Vertical Bar Chart -->
+                    </div>
+                  </div>
+                </div>
+</div>
+<!-- end chart -->
+<!-- Block somme-->
+<div class="d-flex justify-content-center gap-4 my-4">
+    <div class="card text-white bg-primary shadow" style="width: 18rem;">
+        <div class="card-body text-center">
+            <h5 class="card-title">Budget</h5>
+            <h3 class="card-text">$@sommeBudget</h3>
+            <button class="btn btn-info" onclick="showList('budget')">show details</button>
+        </div>
+    </div>
+
+    <div class="card text-white bg-primary shadow" style="width: 18rem;">
+        <div class="card-body text-center">
+            <h5 class="card-title">Lead</h5>
+            <h3 class="card-text">$@sommeLead</h3>
+            <button class="btn btn-info" onclick="showList('lead')">show details</button>
+        </div>
+    </div>
+
+    <div class="card text-white bg-primary shadow" style="width: 18rem;">
+        <div class="card-body text-center">
+            <h5 class="card-title">Ticket</h5>
+            <h3 class="card-text">$@sommeTicket</h3>
+            <button class="btn btn-info" onclick="showList('ticket')">show details</button>
+        </div>
+    </div>
+</div>
+<!-- end block somme -->
+
+
+<hr>
+
+<div id="for-ticket" class="list-container" style="display: none;">
+    <h2>Liste Tickets</h2>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Nom Customer</th>
+            <th>Created At</th>
+            <th>Amount Depense</th>
+            <th>Description Depense</th>
+            <th>Delete</th>
+            <th>Update Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+             @foreach (var ticket in listTicket)
+                    {
+                        <tr>
+                            <td>@ticket.TicketId</td>
+                            <td>@ticket.NomCustomer</td>
+                            <td>@DateUtil.convertDate(@ticket.CreatedAt)</td>
+                            <td>@ticket.AmountDepense</td>
+                            <td>@ticket.DescriptionDepense</td>
+                            <td>
+                                <form method="post" action="/delete-ticket">
+                                    <input name="ticketId" value="@ticket.TicketId" hidden/>
+                                    <button type="submit" class="btn btn-warning">Delete</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" action="/update-ticket">
+                                    <input name="ticketId" value="@ticket.TicketId" hidden/>
+                                    <input name="newPrice" type="number" step="0.01"/>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </form>   
+                            </td>
+                        </tr>
+                    }
+        </tbody>
+    </table>
+</div>
+
+<div id="for-lead" class="list-container" style="display: block;">
+    <h2>Liste Leads</h2>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Lead ID</th>
+            <th>Nom</th>
+            <th>Phone</th>
+            <th>Customer</th>
+            <th>Created at</th>
+            <th>Amount</th>
+            <th>Descirption depense</th>
+            <th>Delete</th>
+            <th>Update Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+           @foreach (var lead in listLead)
+                   {
+                       <tr>
+                           <td>@lead.LeadId</td>
+                           <td>@lead.Name</td>
+                           <td>@lead.Phone</td>
+                           <td>@lead.NomCustomer</td>
+                           <td>@DateUtil.convertDate(@lead.CreatedAt)</td>
+                           <td>@lead.AmountDepense</td>
+                           <td>@lead.DescriptionDepense</td>
+                           <td>
+                               <form method="post" action="/delete-lead">
+                                   <input name="leadId" value="@lead.LeadId" hidden/>
+                                   <button type="submit" class="btn btn-warning">Delete</button>
+                               </form>
+                           </td> 
+                           <td>
+                               <form method="post" action="/update-lead">
+                                   <input name="leadId"value="@lead.LeadId" hidden/>
+                                   <input name="newPrice" type="number" step="0.01"/>
+                                   <button type="submit" class="btn btn-primary">Update</button>
+                               </form>
+                           </td>
+                       </tr>
+                   }
+        </tbody>
+    </table>
+</div>
+
+<div id="for-budget" class="list-container" style="display:none;">
+    <h2>Liste Budgets</h2>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Budget ID</th>
+            <th>Customer ID</th>
+            <th>Nom Customer</th>
+            <th>Date Budget</th>
+            <th>Montant</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var budget in listBudget)
+                    {
+                        <tr>
+                            <td>@budget.IdBudget</td>
+                             <td>@budget.CustomerId</td>
+                            <td>@budget.NomCustomer</td>
+                            <td>@DateUtil.convertDate(@budget.DateBudget)</td>
+                            <td>@budget.Amount</td>
+                        </tr>
+                    }
+        </tbody>
+    </table>
+</div>
+
+<script>
+        function showList(listType) {
+            // Masquer toutes les listes
+            document.getElementById("for-ticket").style.display = "none";
+            document.getElementById("for-lead").style.display = "none";
+            document.getElementById("for-budget").style.display = "none";
+
+            // Afficher la liste correspondante
+            if (listType === 'ticket') {
+                document.getElementById("for-ticket").style.display = "block";
+            } else if (listType === 'lead') {
+                document.getElementById("for-lead").style.display = "block";
+            } else if (listType === 'budget') {
+                document.getElementById("for-budget").style.display = "block";
+            }
+        }
+    </script>
+
