@@ -2,6 +2,9 @@ package site.easy.to.build.crm.my.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,6 +17,8 @@ public class SeuilBudget {
     private Integer idSeuil;
 
     @Column(name = "value", nullable = false)
+    @NotNull(message = "Value could no be null.")
+    @Positive(message = "Value must be positive.")
     private Double value;
 
     @Column(name = "date_set", nullable = false)

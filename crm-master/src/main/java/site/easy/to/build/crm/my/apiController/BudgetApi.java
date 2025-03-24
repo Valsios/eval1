@@ -42,7 +42,7 @@ public class BudgetApi {
             seuilBudget.setValue(Double.parseDouble(newSeuil));
             seuilBudget.setDateSet(LocalDateTime.now());
             seuilBudgetService.save(seuilBudget);
-            return ResponseEntity.ok("Lead update avec succès.");
+            return ResponseEntity.ok("Seuil update avec succès.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
         }
