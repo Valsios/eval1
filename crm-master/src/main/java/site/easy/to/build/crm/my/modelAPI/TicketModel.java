@@ -14,10 +14,23 @@ public class TicketModel {
    String priority;
    String nom_manager;
    String nom_employee;
+    int id_customer;
    String nom_customer;
    Long createdAt;
    Double amount_depense;
    String description_depense;
+
+    public int getId_customer() {
+        return id_customer;
+    }
+
+    public void setId_customer(int id_customer) {
+        this.id_customer = id_customer;
+    }
+
+    public void setCreatedAt(Long createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public int getTicketId() {
         return ticketId;

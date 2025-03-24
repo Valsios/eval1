@@ -120,6 +120,7 @@ public class DepenseService {
             TicketModel ticketModel = new TicketModel();
             Ticket ticket = map.getKey();
             Double value = map.getValue();
+            ticketModel.setId_customer(ticket.getCustomer().getCustomerId());
             ticketModel.setTicketId(ticket.getTicketId());
             ticketModel.setAmount_depense(value);
             ticketModel.setDescription(ticket.getDescription());
@@ -146,6 +147,7 @@ public class DepenseService {
             LeadModel leadModel = new LeadModel();
             Lead lead = map.getKey();
             Double value = map.getValue();
+            leadModel.setId_customer(lead.getCustomer().getCustomerId());
             leadModel.setLeadId(lead.getLeadId());
             leadModel.setName(lead.getName());
             leadModel.setAmount_depense(value);
