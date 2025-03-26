@@ -1,5 +1,6 @@
 package site.easy.to.build.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -49,6 +50,7 @@ public class Ticket {
     private Customer customer;
 
     @Column(name = "created_at")
+    @JsonIgnore
     private LocalDateTime createdAt;
 
     //data pour depense

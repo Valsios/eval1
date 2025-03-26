@@ -28,6 +28,7 @@ public class DataService {
                 "TRUNCATE TABLE file",
                 "TRUNCATE TABLE budget",
                 "TRUNCATE TABLE depense",
+                "TRUNCATE TABLE customer",
                 "set foreign_key_checks = 1"
         };
 

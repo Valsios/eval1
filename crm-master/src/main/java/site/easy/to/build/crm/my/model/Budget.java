@@ -64,6 +64,21 @@ public class Budget {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+    public void setAmount(String amount)throws Exception {
+            try {
+                Double.parseDouble(amount);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Amount format invalid.");
+            }
+            if (Double.parseDouble(amount)<=0)
+            {
+                throw new Exception("Amount must be positive.");
+            }
+            this.amount = BigDecimal.valueOf(Double.parseDouble(amount));;
+
+    }
 
     public Budget() {
     }
