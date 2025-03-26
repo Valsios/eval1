@@ -25,10 +25,10 @@ public interface DepenseRepository extends JpaRepository<Depense,Integer> {
     @Query("DELETE FROM Depense d WHERE d.ticket = :ticket")
     void deleteByTicket(@Param("ticket") Ticket ticket);
 
-    @Query("SELECT d FROM Depense d WHERE d.lead IS NOT NULL AND d.lead.createdAt <= :dateTime")
+    @Query("SELECT d FROM Depense d WHERE d.lead IS NOT NULL AND d.lead.createdAt <= :dateTime ORDER BY d.idDepense ASC")
     List<Depense> getDepenseLeadDate(@Param("dateTime") LocalDateTime dateTime);
 
-    @Query("SELECT d FROM Depense d WHERE d.ticket IS NOT NULL AND d.ticket.createdAt <= :dateTime")
+    @Query("SELECT d FROM Depense d WHERE d.ticket IS NOT NULL AND d.ticket.createdAt <= :dateTime ORDER BY d.idDepense ASC")
     List<Depense> getDepenseTicketDate(@Param("dateTime") LocalDateTime dateTime);
 
 

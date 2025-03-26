@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface TicketLeadTempRepository extends JpaRepository<TicketLeadTemp,Integer> {
 
-    @Query("SELECT t FROM TicketLeadTemp t WHERE t.type LIKE 'lead'")
+    @Query("SELECT t FROM TicketLeadTemp t WHERE t.type LIKE 'lead' ORDER BY t.id ASC")
     public List<TicketLeadTemp> getAllLead();
 
-    @Query("SELECT t FROM TicketLeadTemp t WHERE t.type LIKE 'ticket'")
+    @Query("SELECT t FROM TicketLeadTemp t WHERE t.type LIKE 'ticket' order by t.id ASC")
     public List<TicketLeadTemp> getAllTicket();
 }

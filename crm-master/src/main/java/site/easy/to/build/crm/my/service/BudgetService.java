@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.my.model.Budget;
 import site.easy.to.build.crm.my.modelAPI.BudgetModel;
+import site.easy.to.build.crm.my.modelAPI.LeadModel;
 import site.easy.to.build.crm.my.repository.BudgetRepository;
 import site.easy.to.build.crm.my.repository.SeuilBudgetRepository;
 
 import java.text.Bidi;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -45,7 +47,7 @@ public class BudgetService {
             budgetModel.setId_customer(budget.getCustomer().getCustomerId());
             toReturn.add(budgetModel);
         }
-
+        toReturn.sort(Comparator.comparing(BudgetModel::getIdBudget));
         return toReturn;
     }
 

@@ -29,7 +29,6 @@ public class FormatUtil {
 
     public static String getFormaNumber(String number)
     {
-        number =  number.replace(".","");
         number =  number.replace(",",".");
         number =  number.replace(" ","");
         return number;
@@ -41,14 +40,14 @@ public class FormatUtil {
         {
             if (!leadStatusList.contains(status))
             {
-                throw new Exception("Status invalid.");
+                status="success";
             }
         }
         else if(type.compareTo("ticket")==0)
         {
             if (!ticketStatusList.contains(status))
             {
-                throw new Exception("Status invalid.");
+                status="open";
             }
         }
     }

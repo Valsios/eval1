@@ -18,10 +18,7 @@ import site.easy.to.build.crm.service.ticket.TicketService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DepenseService {
@@ -135,7 +132,7 @@ public class DepenseService {
 
             toReturn.add(ticketModel);
         }
-
+        toReturn.sort(Comparator.comparing(TicketModel::getTicketId));
         return toReturn;
     }
     public List<LeadModel> getListLeadModel(LocalDateTime dateTime)
@@ -161,7 +158,7 @@ public class DepenseService {
 
             toReturn.add(leadModel);
         }
-
+        toReturn.sort(Comparator.comparing(LeadModel::getLeadId));
         return toReturn;
     }
 

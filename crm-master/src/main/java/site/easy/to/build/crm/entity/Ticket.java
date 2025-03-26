@@ -62,6 +62,18 @@ public class Ticket {
     @NotBlank(message = "Description depense required.")
     private String description_depense;
 
+    public String getStringImportant(double expense)
+    {
+        String toReturn = "";
+        toReturn += "copy_"+this.getCustomer().getEmail()+";";
+        toReturn += this.getSubject()+";";
+        toReturn += "ticket;";
+        toReturn += "open;";
+        toReturn += expense;
+
+        return toReturn;
+    }
+
     public BigDecimal getAmount_depense() {
         return amount_depense;
     }

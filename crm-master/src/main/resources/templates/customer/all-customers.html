@@ -109,6 +109,13 @@
                                                     </button>
                                                 </form>
                                             </td>
+                                            <td th:if="${#authorization.expression('hasRole(''ROLE_MANAGER'')')}">
+                                                <form th:action="${home + 'manager/clone-customer/' + customer.customerId}" method="post">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        Clone
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>

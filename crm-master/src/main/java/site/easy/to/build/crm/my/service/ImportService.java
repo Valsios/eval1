@@ -238,9 +238,19 @@ public class ImportService {
                     }
                     ticketLeadTemp.setCustomerEmail(line[0].trim());
                     ticketLeadTemp.setExpense(FormatUtil.getFormaNumber(line[4]));
-                    ticketLeadTemp.setStatus(line[3].toLowerCase().trim());
-                    ticketLeadTemp.setSubjectOrName(line[1]);
                     ticketLeadTemp.setType(line[2].toLowerCase().trim());
+
+                    //ticketLeadTemp.setStatus(line[3].trim().toLowerCase());
+                    if (ticketLeadTemp.getType().compareTo("ticket")==0)
+                    {
+                        ticketLeadTemp.setStatus("open");
+                    }
+                    else
+                    {
+                        ticketLeadTemp.setStatus("success");
+                    }
+                    ticketLeadTemp.setSubjectOrName(line[1]);
+
                     FormatUtil.check_status(ticketLeadTemp.getType(),ticketLeadTemp.getStatus());
                     ticketLeadTempService.save(ticketLeadTemp);
 

@@ -64,6 +64,15 @@ public class Budget {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+
+    public String getStringImportant()
+    {
+        String toReturn = "";
+        toReturn += "copy_"+this.getCustomer().getEmail()+";";
+        toReturn += this.getAmount().doubleValue();
+
+        return toReturn;
+    }
     public void setAmount(String amount)throws Exception {
             try {
                 Double.parseDouble(amount);

@@ -75,6 +75,14 @@ public class Customer {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    public String getStringImportant()
+    {
+        String toReturn = "";
+        toReturn += "copy_"+this.getEmail()+";";
+        toReturn += "copy_"+this.getName();
+        return toReturn;
+    }
+
     //EGALITY OF
     @Override
     public boolean equals(Object o) {

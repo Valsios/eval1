@@ -39,7 +39,7 @@ public class LeadApi {
 
     @PostMapping("/updateLead")
     @Transactional
-    public ResponseEntity<String> updateTicket(@RequestParam("idLead") String idLead,@RequestParam("newPrice") String newPrice) {
+    public ResponseEntity<String> updateLead(@RequestParam("idLead") String idLead,@RequestParam("newPrice") String newPrice) {
         try {
             depenseService.updateValeurLead(idLead,newPrice);
             return ResponseEntity.ok("Lead update avec succès.");
